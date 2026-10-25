@@ -20,13 +20,13 @@ def create_database():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
-    logger.info("Baza SQLite gotowa: %s", DB_PATH)
+    logger.info("SQLite database ready: %s", DB_PATH)
 
 
 def save_jobs(jobs):
     create_database()
     saved_count = 0
-    logger.info("Zapisuję %s dopasowanych ofert do %s.", len(jobs), DB_PATH)
+    logger.info("Saving %s matching listings to %s.", len(jobs), DB_PATH)
 
     with sqlite3.connect(DB_PATH) as connection:
         for job in jobs:
@@ -34,7 +34,7 @@ def save_jobs(jobs):
                 INSERT OR IGNORE INTO jobs (title, company, location, url)
                 VALUES (?, ?, ?, ?)
             """, (
-                job.get("title", "Brak tytułu"),
+                job.get("title", "Untitled listing"),
                 job.get("company_name", ""),
                 job.get("location", ""),
                 job.get("url", "")
@@ -43,7 +43,7 @@ def save_jobs(jobs):
             saved_count += cursor.rowcount
 
     logger.info(
-        "Baza: dodano %s nowych rekordów; pominięto %s istniejących ofert.",
+        "Database: added %s new records; skipped %s existing listings.",
         saved_count,
         len(jobs) - saved_count,
     )
@@ -65,4 +65,4 @@ def get_all_jobs():
 
 if __name__ == "__main__":
     create_database()
-    print("Baza danych została utworzona!")
+    print("Database created!")

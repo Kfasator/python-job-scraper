@@ -1,16 +1,16 @@
 # Python Job Scraper
 
-Lokalna aplikacja, która pobiera oferty z API [Arbeitnow](https://www.arbeitnow.com/api), wybiera oferty dla początkujących programistów Python pracujących przy backendzie lub API, zapisuje nowe wyniki w SQLite i udostępnia je w prostym interfejsie WWW.
+A local application that fetches job listings from the [Arbeitnow API](https://www.arbeitnow.com/api), filters for junior Python backend and API roles, stores new matches in SQLite, and displays them in a simple web interface.
 
-## Wymagania
+## Requirements
 
-- Python 3.12 lub nowszy
-- Połączenie z internetem podczas pobierania ofert
-- macOS, jeśli chcesz otrzymywać powiadomienia systemowe o nowych ofertach
+- Python 3.12 or newer
+- An internet connection to fetch listings
+- macOS for desktop notifications about new listings
 
-## Instalacja
+## Installation
 
-W katalogu projektu utwórz środowisko i zainstaluj zależności:
+From the project directory, create a virtual environment and install the runtime dependencies:
 
 ```bash
 python3 -m venv venv
@@ -18,43 +18,43 @@ source venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-## Użycie
+## Usage
 
-Uruchom pobieranie ofert:
+Run the scraper to fetch and save matching listings:
 
 ```bash
 python app/scraper.py
 ```
 
-Scraper wypisuje dopasowane oferty, zapisuje nowe w `data/jobs.db` i wysyła powiadomienie macOS, jeśli znalazł nowe wyniki.
+The scraper prints matching listings, saves new ones to `data/jobs.db`, and sends a macOS notification when it finds new results.
 
-Aby otworzyć interfejs, uruchom serwer w drugim terminalu:
+To view saved listings, start the web server in a second terminal:
 
 ```bash
 source venv/bin/activate
 python app/server.py
 ```
 
-Otwórz <http://127.0.0.1:8000>. Interfejs pokazuje zapisane oferty i pozwala wyszukiwać je po stanowisku, firmie oraz lokalizacji. Odśwież widok po kolejnym uruchomieniu scrapera.
+Open <http://127.0.0.1:8000>. The interface lets you search saved listings by title, company, and location. Refresh the page after another scraper run to see new results.
 
-## Kryteria filtrowania
+## Filtering criteria
 
-Oferta musi zawierać odniesienie do Pythona (lub Django, FastAPI albo Flask), wskazywać rolę programistyczną, poziom junior/stażowy oraz pracę z backendem lub API. Wybrane niepowiązane role, m.in. sprzedaż, wsparcie techniczne i analiza danych, są pomijane.
+A listing must mention Python, Django, FastAPI, or Flask; indicate a software development role; be junior or entry-level; and involve backend or API work. Unrelated roles, including sales, support, and data analysis, are excluded. The filter also recognizes Polish job-title terms to match local listings.
 
-## Testy
+## Tests
 
-Zainstaluj zależności deweloperskie, w tym przypiętą wersję `pytest`:
+Install the development dependencies, including the pinned `pytest` version:
 
 ```bash
 python -m pip install -r requirements-dev.txt
 ```
 
-Uruchom testy z głównego katalogu projektu:
+Run the tests from the project directory:
 
 ```bash
 python -m pytest
 ```
 
-## Dane lokalne
+## Local data
 
-Baza SQLite (`data/jobs.db`), logi, środowisko wirtualne i pliki tymczasowe nie są przeznaczone do publikacji w repozytorium. Są wykluczone przez `.gitignore`; baza tworzy się automatycznie przy pierwszym uruchomieniu.
+The SQLite database (`data/jobs.db`), logs, virtual environment, and temporary files are not included in the repository. They are excluded by `.gitignore`. The database is created automatically on the first run.

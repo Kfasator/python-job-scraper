@@ -58,12 +58,12 @@ def send_notification(title, message):
         text=True,
     )
     if result.returncode == 0:
-        logging.getLogger(__name__).info("Powiadomienie macOS wysłane.")
+        logging.getLogger(__name__).info("macOS notification sent.")
     else:
         logging.getLogger(__name__).warning(
-            "Nie udało się wysłać powiadomienia macOS (kod %s): %s",
+            "Could not send macOS notification (code %s): %s",
             result.returncode,
-            result.stderr.strip() or "brak szczegółów",
+            result.stderr.strip() or "no details available",
         )
 
 
@@ -71,44 +71,44 @@ def main():
     configure_logging()
     logger = logging.getLogger(__name__)
     started_at = time.monotonic()
-    logger.info("Rozpoczynam przebieg scrapera.")
-    logger.info("Źródło ofert: %s", SOURCE_URL)
-    logger.info("Plik logu: %s", LOG_PATH)
+    logger.info("Starting scraper run.")
+    logger.info("Listings source: %s", SOURCE_URL)
+    logger.info("Log file: %s", LOG_PATH)
 
     try:
-        logger.info("Pobieram dane z API (limit czasu: 15 s).")
+        logger.info("Fetching data from the API (timeout: 15 s).")
         response = requests.get(SOURCE_URL, timeout=15)
-        logger.info("API odpowiedziało kodem HTTP %s.", response.status_code)
+        logger.info("API returned HTTP status %s.", response.status_code)
         response.raise_for_status()
 
         data = response.json()
         if not isinstance(data, dict) or not isinstance(data.get("data"), list):
-            raise ValueError("Odpowiedź API ma nieoczekiwany format: brak listy 'data'.")
+            raise ValueError("Unexpected API response: missing 'data' list.")
         source_jobs = data["data"]
-        logger.info("Pobrano %s ofert ze źródła.", len(source_jobs))
+        logger.info("Fetched %s listings from the source.", len(source_jobs))
 
         jobs = filter_jobs(source_jobs)
-        logger.info("Filtry wybrały %s ofert.", len(jobs))
-        print(f"Znaleziono ofert: {len(jobs)}")
+        logger.info("Filters selected %s listings.", len(jobs))
+        print(f"Matching listings found: {len(jobs)}")
         for job in jobs:
             logger.info(
-                "Dopasowana oferta: stanowisko=%r | firma=%r | lokalizacja=%r | URL=%s",
-                job.get("title", "Brak tytułu"),
+                "Matching listing: title=%r | company=%r | location=%r | URL=%s",
+                job.get("title", "Untitled listing"),
                 job.get("company_name", ""),
                 job.get("location", ""),
-                job.get("url", "Brak URL"),
+                job.get("url", "No URL"),
             )
-            print("Stanowisko:", job.get("title", "Brak tytułu"))
-            print("Firma:", job.get("company_name", ""))
-            print("Lokalizacja:", job.get("location", ""))
+            print("Title:", job.get("title", "Untitled listing"))
+            print("Company:", job.get("company_name", ""))
+            print("Location:", job.get("location", ""))
             print("Link:", job.get("url", ""))
             print("-" * 50)
 
-        logger.info("Zapisuję wybrane oferty do lokalnej bazy SQLite.")
+        logger.info("Saving selected listings to the local SQLite database.")
         saved_count = save_jobs(jobs)
-        print(f"Zapisano nowych ofert do SQLite: {saved_count}")
+        print(f"New listings saved to SQLite: {saved_count}")
         logger.info(
-            "Zapis zakończony: %s nowych ofert; %s dopasowanych już było w bazie.",
+            "Save complete: %s new listings; %s matching listings were already in the database.",
             saved_count,
             len(jobs) - saved_count,
         )
@@ -116,19 +116,19 @@ def main():
         if saved_count > 0:
             send_notification(
                 "Python Job Scraper",
-                f"Zapisano {saved_count} nowych ofert pracy.",
+                f"Saved {saved_count} new job listings.",
             )
-            print("Wysłano powiadomienie macOS.")
+            print("macOS notification sent.")
         else:
-            logger.info("Brak nowych ofert; powiadomienie nie zostało wysłane.")
-            print("Brak nowych ofert. Powiadomienie nie zostało wysłane.")
+            logger.info("No new listings; notification was not sent.")
+            print("No new listings. Notification was not sent.")
 
-        logger.info("Przebieg zakończony poprawnie w %.2f s.", time.monotonic() - started_at)
+        logger.info("Run completed successfully in %.2f s.", time.monotonic() - started_at)
     except requests.RequestException:
-        logger.exception("Błąd podczas pobierania danych ze źródła %s.", SOURCE_URL)
+        logger.exception("Error fetching data from source %s.", SOURCE_URL)
         raise
     except Exception:
-        logger.exception("Przebieg scrapera zakończył się błędem.")
+        logger.exception("Scraper run failed.")
         raise
 
 

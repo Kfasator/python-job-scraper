@@ -36,6 +36,7 @@ def filter_jobs(jobs):
         )
 
         # Identify junior and entry-level positions
+        # Keep Polish title terms so the scraper can match local listings.
         junior_keywords = [
             "junior",
             "entry level",

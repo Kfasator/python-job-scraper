@@ -36,6 +36,6 @@ class ScraperHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     address = ("127.0.0.1", 8000)
-    print(f"Interfejs scrapera: http://{address[0]}:{address[1]}")
-    print("Zatrzymaj serwer skrótem Ctrl+C.")
+    print(f"Job scraper interface: http://{address[0]}:{address[1]}")
+    print("Stop the server with Ctrl+C.")
     ThreadingHTTPServer(address, ScraperHandler).serve_forever()
