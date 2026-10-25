@@ -43,10 +43,15 @@ Oferta musi zawierać odniesienie do Pythona (lub Django, FastAPI albo Flask), w
 
 ## Testy
 
-Testy filtrów wymagają `pytest`. Zainstaluj go w środowisku projektu i uruchom:
+Zainstaluj zależności deweloperskie, w tym przypiętą wersję `pytest`:
 
 ```bash
-python -m pip install pytest
+python -m pip install -r requirements-dev.txt
+```
+
+Uruchom testy z głównego katalogu projektu:
+
+```bash
 python -m pytest
 ```
 
