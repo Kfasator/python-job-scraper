@@ -9,3 +9,5 @@ data/*.db
 
 scraper.log
 scraper-error.log
+
+scraper.log.*
